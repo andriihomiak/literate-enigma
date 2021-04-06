@@ -11,7 +11,8 @@ class TrainingConfig(BaseModel):
     gpus: int
     max_epochs: int
     betas: Tuple[float, float]
-
+    seed: int
+    
     @staticmethod
     def load_file(key: str, file: Path = Path("params.yaml")):
         config = yaml.safe_load(file.read_text())[key]

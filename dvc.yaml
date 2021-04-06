@@ -13,6 +13,7 @@ stages:
       - train
     deps:
       - src/train.py
+      - src/models/
       - data/src/
     outs:
       - data/model/best.pt

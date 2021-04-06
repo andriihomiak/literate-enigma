@@ -34,15 +34,18 @@ def get_trainer(params: TrainingConfig) -> pl.Trainer:
 def get_model(params: TrainingConfig) -> pl.LightningModule:
     return AlexNet(input_channels=1, lr=params.learning_rate, betas=params.betas)
 
+
 def save_model(model: pl.LightningModule, folder: Path):
     folder.mkdir(exist_ok=True, parents=True)
     file = folder/"best.pt"
     torch.save(model.state_dict(), file)
 
+
 def run_training(data_dir: Path, out_dir: Path, params: TrainingConfig):
     train_dataloader, val_dataloader = get_dataloaders(data_dir, params=params)
     trainer = get_trainer(params=params)
     model = get_model(params=params)
+    pl.utilities.seed.seed_everything(params.seed)
     trainer.fit(model, train_dataloader=train_dataloader, val_dataloaders=val_dataloader)
     save_model(model, folder=out_dir)
 
