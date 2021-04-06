@@ -19,12 +19,12 @@ stages:
       size: 356712185
       nfiles: 9
     - path: src/models/
-      md5: b2202ff2da08ece208b44896ddf303b0.dir
-      size: 6288
+      md5: 3b4653e7412fd3adeec968ef369db6f1.dir
+      size: 3192
       nfiles: 2
     - path: src/train.py
-      md5: a2b56cecefa76aa782d38f3e4920c456
-      size: 2220
+      md5: 2965821adac0df40a8339255ecdd9d74
+      size: 2254
     params:
       params.yaml:
         train:
@@ -36,7 +36,8 @@ stages:
           - 0.98
           - 0.99
           seed: 42
+          auto_lr_find: true
     outs:
     - path: data/model/best.pt
-      md5: 31d9d4ee250a3eaa8c41eeb6e4295aaf
+      md5: 649bae50a591f2d5ff88079e4aa8bc98
       size: 2228218

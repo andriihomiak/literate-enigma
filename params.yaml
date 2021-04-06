@@ -5,3 +5,4 @@ train:
   max_epochs: 100
   betas: [0.98, 0.99]
   seed: 42
+  auto_lr_find: True

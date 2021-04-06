@@ -59,6 +59,7 @@ class AlexNet(LightningModule):
         return loss
 
     def training_step(self, batch, batch_idx):
+        self.log("lr", self.lr)
         return self._generic_step(batch, batch_idx, prefix="train")
 
     def validation_step(self, batch, batch_idx):
@@ -71,7 +72,12 @@ class AlexNet(LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(
             self.parameters(), lr=self.lr, betas=self.betas)
-        return optimizer
+        lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min")
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": lr_scheduler,
+            "monitor": "val_loss",
+        }
 
     def log_metrics(self, preds, y, prefix: str):
         accuracy_score = accuracy(preds, y)

@@ -31,7 +31,7 @@ def get_dataloaders(data_dir: Path, params: TrainingConfig) -> Tuple[DataLoader,
 
 
 def get_trainer(params: TrainingConfig) -> pl.Trainer:
-    return pl.Trainer(gpus=params.gpus, max_epochs=params.max_epochs, deterministic=True)
+    return pl.Trainer(gpus=params.gpus, max_epochs=params.max_epochs, deterministic=True, auto_lr_find=params.auto_lr_find)
 
 
 def get_model(params: TrainingConfig) -> pl.LightningModule:

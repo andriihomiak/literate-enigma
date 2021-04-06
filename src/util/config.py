@@ -12,6 +12,7 @@ class TrainingConfig(BaseModel):
     max_epochs: int
     betas: Tuple[float, float]
     seed: int
+    auto_lr_find: bool
     
     @staticmethod
     def load_file(key: str, file: Path = Path("params.yaml")):
