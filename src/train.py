@@ -29,10 +29,10 @@ def get_dataloaders(data_dir: Path, params: TrainingConfig) -> Tuple[DataLoader,
     return DataLoader(train_dataset, **dataloader_kwargs), DataLoader(val_dataset, **dataloader_kwargs)
 
 def get_trainer(params: TrainingConfig) -> pl.Trainer:
-    return pl.Trainer(gpus=params.gpus, max_epochs=10)
+    return pl.Trainer(gpus=params.gpus, max_epochs=10, deterministic=True)
 
 def get_model(params: TrainingConfig) -> pl.LightningModule:
-    return AlexNet()
+    return AlexNet(input_channels=1, lr=params.learning_rate, betas=params.betas)
 
 def save_model(model: pl.LightningModule, folder: Path):
     folder.mkdir(exist_ok=True, parents=True)

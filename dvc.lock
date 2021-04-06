@@ -19,13 +19,13 @@ stages:
       size: 121986948
       nfiles: 10
     - path: src/train.py
-      md5: b039ee8ed03c91bf494e28cdf1b6b378
-      size: 2012
+      md5: b64de692b395647a10e0e8fca4337e48
+      size: 2093
     params:
       params.yaml:
         train:
           batch_size: 512
-          learning_rate: 1e-06
+          learning_rate: 0.001
           gpus: 1
           max_epochs: 20
           betas:
@@ -33,5 +33,5 @@ stages:
           - 0.999
     outs:
     - path: data/model/best.pt
-      md5: c34e03305429ba88d13f6fa2c80b3253
+      md5: 62b0ffd49ed4dc832016ff8c524ef1f1
       size: 1727223
