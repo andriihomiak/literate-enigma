@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from torchvision.datasets import MNIST
+from torchvision.datasets import CIFAR10
 
 from models import AlexNet
 from util.config import TrainingConfig
@@ -18,21 +18,24 @@ def get_transforms() -> transforms.Compose:
         transforms.ToTensor()
     ])
 
+
 def get_dataloaders(data_dir: Path, params: TrainingConfig) -> Tuple[DataLoader, DataLoader]:
     transform = get_transforms()
-    train_dataset = MNIST(data_dir, train=True, transform=transform)
-    val_dataset = MNIST(data_dir, train=False, transform=transform)
+    train_dataset = CIFAR10(data_dir, train=True, transform=transform)
+    val_dataset = CIFAR10(data_dir, train=False, transform=transform)
     dataloader_kwargs = {
         "num_workers": cpu_count(),
         "batch_size": params.batch_size,
     }
     return DataLoader(train_dataset, **dataloader_kwargs), DataLoader(val_dataset, **dataloader_kwargs)
 
+
 def get_trainer(params: TrainingConfig) -> pl.Trainer:
-    return pl.Trainer(gpus=params.gpus, max_epochs=10, deterministic=True)
+    return pl.Trainer(gpus=params.gpus, max_epochs=params.max_epochs, deterministic=True)
+
 
 def get_model(params: TrainingConfig) -> pl.LightningModule:
-    return AlexNet(input_channels=1, lr=params.learning_rate, betas=params.betas)
+    return AlexNet(input_channels=3, num_classes=10, lr=params.learning_rate, betas=params.betas)
 
 
 def save_model(model: pl.LightningModule, folder: Path):
@@ -46,12 +49,15 @@ def run_training(data_dir: Path, out_dir: Path, params: TrainingConfig):
     trainer = get_trainer(params=params)
     model = get_model(params=params)
     pl.utilities.seed.seed_everything(params.seed)
-    trainer.fit(model, train_dataloader=train_dataloader, val_dataloaders=val_dataloader)
+    trainer.fit(model, train_dataloader=train_dataloader,
+                val_dataloaders=val_dataloader)
     save_model(model, folder=out_dir)
+
 
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
-    run_training(data_dir=args.input_dir, out_dir=args.output_dir, params=TrainingConfig.load_file(key="train"))
+    run_training(data_dir=args.input_dir, out_dir=args.output_dir,
+                 params=TrainingConfig.load_file(key="train"))

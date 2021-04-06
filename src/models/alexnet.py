@@ -8,25 +8,42 @@ from torch.nn import functional as F
 
 
 class AlexNet(LightningModule):
-    def __init__(self, input_channels: int = 1, n_classes: int = 10, lr: float = 1e-3, betas: Tuple[float, float] = (0.9, 0.999)):
+    def __init__(self, input_channels: int = 1, num_classes: int = 10, lr: float = 1e-3, betas: Tuple[float, float] = (0.9, 0.999)):
         super(AlexNet, self).__init__()
         self.lr = lr
         self.betas = betas
-        self.n_classes = n_classes
+        self.num_classes = num_classes
         self.net = nn.Sequential(
-            # input_channels * 28 * 28
-            nn.Conv2d(in_channels=input_channels,
-                      out_channels=20, kernel_size=(5, 5)),
-            # 20 * 24 * 24
-            nn.MaxPool2d(kernel_size=(2, 2)),
-            # 20 * 12 * 12
-            nn.Conv2d(in_channels=20, out_channels=50, kernel_size=(5, 5)),
-            # 50 * 8 * 8
-            nn.MaxPool2d(kernel_size=(2, 2)),
-            # 50 * 4 * 4
+            # 3 * 32 * 32
+            self._make_block(in_channels=3, out_channels=32, dropout=0.2),
+            # 32 * 16 * 16
+            self._make_block(in_channels=32, out_channels=64, dropout=0.3),
+            # 64 * 8 * 8
+            self._make_block(in_channels=64, out_channels=128, dropout=0.4),
+            # 128 * 4 * 4
             nn.Flatten(),
-            nn.Linear(in_features=50 * 4 * 4, out_features=500),
-            nn.Linear(in_features=500, out_features=self.n_classes),
+            nn.Linear(128 * 4 * 4, 128),
+            nn.LeakyReLU(),
+            nn.BatchNorm1d(128),
+            nn.Dropout(0.5),
+            nn.Linear(128, 10)
+        )
+
+    def _make_block(self, in_channels: int, out_channels: int, dropout: float):
+        return nn.Sequential(
+            # in_channels * D * D
+            nn.Conv2d(in_channels=in_channels,
+                      out_channels=out_channels, kernel_size=(3, 3), padding=1),
+            nn.LeakyReLU(),
+            nn.BatchNorm2d(out_channels),
+            # out_channels * D * D
+            nn.Conv2d(in_channels=out_channels,
+                      out_channels=out_channels, kernel_size=(3, 3), padding=1),
+            nn.LeakyReLU(),
+            nn.BatchNorm2d(out_channels),
+            nn.MaxPool2d((2, 2)),
+            # out_channels * D / 2 * D / 2
+            nn.Dropout2d(dropout),
         )
 
     def forward(self, x):
@@ -58,6 +75,7 @@ class AlexNet(LightningModule):
 
     def log_metrics(self, preds, y, prefix: str):
         accuracy_score = accuracy(preds, y)
-        f1_score = f1(preds, y, num_classes=self.n_classes)
+        f1_score = f1(preds, y, num_classes=self.num_classes)
         self.log(f"{prefix}_accuracy", accuracy_score)
+        self.log(f"{prefix}_error", 1 - accuracy_score)
         self.log(f"{prefix}_f1", f1_score)

@@ -4,40 +4,39 @@ stages:
     cmd: python src/download_data.py data/src/
     deps:
     - path: src/download_data.py
-      md5: 0f8813daa9983126286a8967a2ef5b24
-      size: 377
+      md5: 06210d6d0492f7be33bc6d108723772e
+      size: 379
     outs:
     - path: data/src
-      md5: 4e9051d739d38878c149bd2e4926182c.dir
-      size: 121986948
-      nfiles: 10
+      md5: e252d2c8ba36d1ab3e21a873ab62daa3.dir
+      size: 356712185
+      nfiles: 9
   train:
     cmd: python src/train.py --input-dir data/src/ --output-dir data/model/
     deps:
     - path: data/src/
-      md5: 4e9051d739d38878c149bd2e4926182c.dir
-      size: 121986948
-      nfiles: 10
+      md5: e252d2c8ba36d1ab3e21a873ab62daa3.dir
+      size: 356712185
+      nfiles: 9
     - path: src/models/
-      md5: 472c6a84050e7197eafe8ce22134938f.dir
-      size: 2254
+      md5: b2202ff2da08ece208b44896ddf303b0.dir
+      size: 6288
       nfiles: 2
     - path: src/train.py
-      md5: 9b1237facff665ca8b6e4721db7dc7b3
-      size: 2146
+      md5: a2b56cecefa76aa782d38f3e4920c456
+      size: 2220
     params:
       params.yaml:
         train:
-          batch_size: 1024
-          learning_rate: 0.001
+          batch_size: 2048
+          learning_rate: 0.0001
           gpus: 1
-          max_epochs: 20
+          max_epochs: 100
           betas:
-          - 0.9
-          - 0.999
+          - 0.98
+          - 0.99
           seed: 42
-          _t: 0
     outs:
     - path: data/model/best.pt
-      md5: c389ef0be2d627d41540ee5cceac6afc
-      size: 1727224
+      md5: 31d9d4ee250a3eaa8c41eeb6e4295aaf
+      size: 2228218
