@@ -1,0 +1,4 @@
+[core]
+    remote = temp-dir
+['remote "temp-dir"']
+    url = /tmp/literate-enigma
