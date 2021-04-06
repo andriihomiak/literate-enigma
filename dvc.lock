@@ -11,3 +11,27 @@ stages:
       md5: 55c6e34eadde2b79a91ad7447b2b53de.dir
       size: 121986948
       nfiles: 10
+  train:
+    cmd: python src/train.py --input-dir data/src/ --output-dir data/model/
+    deps:
+    - path: data/src/
+      md5: 55c6e34eadde2b79a91ad7447b2b53de.dir
+      size: 121986948
+      nfiles: 10
+    - path: src/train.py
+      md5: b039ee8ed03c91bf494e28cdf1b6b378
+      size: 2012
+    params:
+      params.yaml:
+        train:
+          batch_size: 512
+          learning_rate: 1e-06
+          gpus: 1
+          max_epochs: 20
+          betas:
+          - 0.9
+          - 0.999
+    outs:
+    - path: data/model/best.pt
+      md5: c34e03305429ba88d13f6fa2c80b3253
+      size: 1727223
