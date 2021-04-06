@@ -1,0 +1,13 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python src/download_data.py data/src/
+    deps:
+    - path: src/download_data.py
+      md5: 0f8813daa9983126286a8967a2ef5b24
+      size: 377
+    outs:
+    - path: data/src
+      md5: 55c6e34eadde2b79a91ad7447b2b53de.dir
+      size: 121986948
+      nfiles: 10
