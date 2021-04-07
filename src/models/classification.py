@@ -7,12 +7,25 @@ from torch import nn
 from torch.nn import functional as F
 
 
-class AlexNet(LightningModule):
-    def __init__(self, input_channels: int = 1, num_classes: int = 10, lr: float = 1e-3, betas: Tuple[float, float] = (0.9, 0.999)):
-        super(AlexNet, self).__init__()
+class ClassificationNet(LightningModule):
+    def __init__(self, 
+            input_channels: int = 1, 
+            num_classes: int = 10, 
+            lr: float = 1e-3, 
+            betas: Tuple[float, float] = (0.9, 0.999),
+            reduce_lr_patience: int = 10,
+            reduce_lr_threshold: float = 0.001,
+            reduce_lr_factor: float = 0.2,
+            reduce_lr_cooldown: int = 10,
+            ):
+        super(ClassificationNet, self).__init__()
         self.lr = lr
         self.betas = betas
         self.num_classes = num_classes
+        self.reduce_lr_cooldown = reduce_lr_cooldown
+        self.reduce_lr_factor = reduce_lr_factor
+        self.reduce_lr_patience = reduce_lr_patience
+        self.reduce_lr_threshold = reduce_lr_threshold
         self.net = nn.Sequential(
             # 3 * 32 * 32
             self._make_block(in_channels=3, out_channels=32, dropout=0.2),
@@ -59,7 +72,6 @@ class AlexNet(LightningModule):
         return loss
 
     def training_step(self, batch, batch_idx):
-        self.log("lr", self.lr)
         return self._generic_step(batch, batch_idx, prefix="train")
 
     def validation_step(self, batch, batch_idx):
@@ -72,7 +84,12 @@ class AlexNet(LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(
             self.parameters(), lr=self.lr, betas=self.betas)
-        lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min")
+        lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, 
+            threshold=self.reduce_lr_threshold, 
+            patience=self.reduce_lr_patience, 
+            factor=self.reduce_lr_factor,
+            mode="min", verbose=True)
         return {
             "optimizer": optimizer,
             "lr_scheduler": lr_scheduler,

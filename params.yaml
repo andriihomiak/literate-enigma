@@ -1,8 +1,12 @@
 train:
-  batch_size: 2048
-  learning_rate: 1e-4
+  batch_size: 3072
+  learning_rate: 1e-3
   gpus: 1
   max_epochs: 100
   betas: [0.98, 0.99]
   seed: 42
   auto_lr_find: True
+  reduce_lr_patience: 10
+  reduce_lr_threshold: 0.001
+  reduce_lr_factor: 0.2
+  reduce_lr_cooldown: 10

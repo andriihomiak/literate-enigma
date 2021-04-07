@@ -1,1 +1,1 @@
-from .alexnet import AlexNet
+from .classification import ClassificationNet

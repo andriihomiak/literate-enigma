@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from torchvision.datasets import CIFAR10
 
-from models import AlexNet
+from models import ClassificationNet
 from util.config import TrainingConfig
 
 
@@ -31,11 +31,26 @@ def get_dataloaders(data_dir: Path, params: TrainingConfig) -> Tuple[DataLoader,
 
 
 def get_trainer(params: TrainingConfig) -> pl.Trainer:
-    return pl.Trainer(gpus=params.gpus, max_epochs=params.max_epochs, deterministic=True, auto_lr_find=params.auto_lr_find)
+    lr_logger = pl.callbacks.LearningRateMonitor("step")
+    return pl.Trainer(
+        gpus=params.gpus, 
+        max_epochs=params.max_epochs, 
+        deterministic=True, 
+        auto_lr_find=params.auto_lr_find,
+        callbacks=[lr_logger]
+        )
 
 
 def get_model(params: TrainingConfig) -> pl.LightningModule:
-    return AlexNet(input_channels=3, num_classes=10, lr=params.learning_rate, betas=params.betas)
+    return ClassificationNet(
+        input_channels=3, 
+        num_classes=10, 
+        lr=params.learning_rate, 
+        betas=params.betas,
+        reduce_lr_cooldown=params.reduce_lr_cooldown,
+        reduce_lr_patience=params.reduce_lr_patience,
+        reduce_lr_threshold=params.reduce_lr_threshold,
+        reduce_lr_factor=params.reduce_lr_factor)
 
 
 def save_model(model: pl.LightningModule, folder: Path):

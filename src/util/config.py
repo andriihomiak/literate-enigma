@@ -13,6 +13,10 @@ class TrainingConfig(BaseModel):
     betas: Tuple[float, float]
     seed: int
     auto_lr_find: bool
+    reduce_lr_patience: int
+    reduce_lr_threshold: float
+    reduce_lr_factor: float
+    reduce_lr_cooldown: int
     
     @staticmethod
     def load_file(key: str, file: Path = Path("params.yaml")):
