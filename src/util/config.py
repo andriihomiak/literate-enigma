@@ -13,6 +13,7 @@ class TrainingConfig(BaseModel):
     betas: Tuple[float, float]
     seed: int
     auto_lr_find: bool
+    tpu_cores: int
     
     @staticmethod
     def load_file(key: str, file: Path = Path("params.yaml")):

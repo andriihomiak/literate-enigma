@@ -1,8 +1,9 @@
 train:
-  batch_size: 2048
-  learning_rate: 1e-4
-  gpus: 1
+  batch_size: 6144
+  learning_rate: 1e-2
+  gpus: 0
+  tpu_cores: 8
   max_epochs: 100
-  betas: [0.98, 0.99]
+  betas: [0.99, 0.9999]
   seed: 42
   auto_lr_find: True
