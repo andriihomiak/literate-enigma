@@ -33,15 +33,53 @@ stages:
           gpus: 1
           max_epochs: 100
           betas:
-          - 0.98
+          - 0.95
           - 0.99
           seed: 42
           auto_lr_find: true
-          reduce_lr_patience: 10
+          reduce_lr_patience: 5
           reduce_lr_threshold: 0.001
           reduce_lr_factor: 0.2
-          reduce_lr_cooldown: 10
+          reduce_lr_cooldown: 5
     outs:
     - path: data/model/best.pt
-      md5: d72c34b533886fb635ff086f506761fe
+      md5: 7dd6f772464425e5ee07c75974bd55ef
       size: 2228218
+  test:
+    cmd: python src/test.py --model-file data/model/best.pt --data-dir data/src/ --metrics-file
+      metrics.json
+    deps:
+    - path: data/model/best.pt
+      md5: 7dd6f772464425e5ee07c75974bd55ef
+      size: 2228218
+    - path: data/src/
+      md5: e252d2c8ba36d1ab3e21a873ab62daa3.dir
+      size: 356712185
+      nfiles: 9
+    - path: src/models/
+      md5: ff08aea902d80b23a19e842d0baa4cb3.dir
+      size: 10980
+      nfiles: 2
+    - path: src/test.py
+      md5: 1d278c0e55c7d4c86bfd8e67424eb5ce
+      size: 2767
+    params:
+      params.yaml:
+        train:
+          batch_size: 3072
+          learning_rate: 0.001
+          gpus: 1
+          max_epochs: 100
+          betas:
+          - 0.95
+          - 0.99
+          seed: 42
+          auto_lr_find: true
+          reduce_lr_patience: 5
+          reduce_lr_threshold: 0.001
+          reduce_lr_factor: 0.2
+          reduce_lr_cooldown: 5
+    outs:
+    - path: metrics.json
+      md5: c8782c40768b576527726e3b5c4d800c
+      size: 145

@@ -17,3 +17,18 @@ stages:
       - data/src/
     outs:
       - data/model/best.pt
+  test:
+    cmd: python src/test.py 
+      --model-file data/model/best.pt
+      --data-dir data/src/
+      --metrics-file metrics.json
+    params:
+      - train
+    deps:
+      - src/test.py
+      - src/models/
+      - data/model/best.pt
+      - data/src/
+    metrics:
+      - metrics.json:
+          cache: false

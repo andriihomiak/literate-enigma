@@ -3,10 +3,10 @@ train:
   learning_rate: 1e-3
   gpus: 1
   max_epochs: 100
-  betas: [0.98, 0.99]
+  betas: [0.95, 0.99]
   seed: 42
   auto_lr_find: True
-  reduce_lr_patience: 10
+  reduce_lr_patience: 5
   reduce_lr_threshold: 0.001
   reduce_lr_factor: 0.2
-  reduce_lr_cooldown: 10
+  reduce_lr_cooldown: 5
